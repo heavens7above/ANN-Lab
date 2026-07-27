@@ -1,14 +1,13 @@
 # Artificial Neural Networks (ANN) & Deep Learning Lab
 
-## Conceptual Reference Guide: Labs 1, 2, and 3
+## Conceptual Reference Guide: Labs 1, 2, 3, and 4
 
-This repository contains Jupyter Notebooks that guide you through building and understanding neural networks. We start with a basic Perceptron built from scratch, move to a single neuron with a smooth activation function, and finally build a complete Feedforward Neural Network using TensorFlow/Keras.
+This repository contains Jupyter Notebooks that guide you through building and understanding neural networks. We start with a basic Perceptron built from scratch, move to a single neuron with a smooth activation function, build a binary Feedforward Neural Network using TensorFlow/Keras, and culminate with a Multi-Layer Perceptron (MLP) for Multiclass Classification.
 
-- **Lab 1 Notebook**: [ANN_lab1.ipynb](./ANN_lab1.ipynb) — Perceptron from scratch using NumPy.
-- **Lab 2 Notebook**: [ANN_lab2.ipynb](./ANN_lab2.ipynb) — Single neuron forward pass with Sigmoid activation.
-- **Lab 3 Notebook**: [ANN_lab3.ipynb](./ANN_lab3.ipynb) — Multi-Layer Perceptron using TensorFlow/Keras.
-
-All three labs use the logical **AND gate** as the dataset.
+- **Lab 1 Notebook**: [ANN_lab1.ipynb](./ANN_lab1.ipynb) — Perceptron from scratch using NumPy (AND Gate).
+- **Lab 2 Notebook**: [ANN_lab2.ipynb](./ANN_lab2.ipynb) — Single neuron forward pass with Sigmoid activation (AND Gate).
+- **Lab 3 Notebook**: [ANN_lab3.ipynb](./ANN_lab3.ipynb) — Multi-Layer Perceptron using TensorFlow/Keras (Binary AND Gate).
+- **Lab 4 Notebook**: [ANN_lab4.ipynb](./ANN_lab4.ipynb) — Keras MLP for Multiclass Classification (Iris Dataset).
 
 > [!NOTE]
 > For a very simple version with stories and analogies, check out the [Explaination Guide](./explaination.md).
@@ -34,31 +33,41 @@ All three labs use the logical **AND gate** as the dataset.
    - [Layers & Trainable Parameters](#lab-3-layers--trainable-parameters)
    - [Loss & Optimizers Made Simple](#lab-3-loss--optimizers-made-simple)
    - [Code Breakdown](#lab-3-code-breakdown)
-5. [🎓 The Viva Q&A Guide (20+ Conceptual Questions)](#-the-viva-qa-guide-20-conceptual-questions)
+5. [Lab 4: Keras MLP for Multiclass Classification](#-lab-4-keras-mlp-for-multiclass-classification)
+   - [Conceptual Foundations](#lab-4-conceptual-foundations)
+   - [Layers & Trainable Parameters](#lab-4-layers--trainable-parameters)
+   - [Loss & Activation Functions Made Simple](#lab-4-loss--activation-functions-made-simple)
+   - [Code Breakdown](#lab-4-code-breakdown)
+6. [🎓 The Viva Q&A Guide (25+ Conceptual Questions)](#-the-viva-qa-guide-25-conceptual-questions)
 
 ---
 
 ## 🗺️ Notebook Overview
 
-The three labs show different ways to build and train network models:
+The four labs show the complete progression of neural network concepts:
 
 ```mermaid
 graph TD
-    A["Repository Notebooks<br>(Labs 1, 2, and 3)"] --> B[Lab 1: Perceptron from Scratch]
+    A["Repository Notebooks<br>(Labs 1, 2, 3, and 4)"] --> B[Lab 1: Perceptron from Scratch]
     A --> C[Lab 2: Manual Neuron Forward Pass]
-    A --> D[Lab 3: Keras MLP Classifier]
+    A --> D[Lab 3: Keras Binary MLP]
+    A --> E[Lab 4: Keras Multiclass MLP]
 
     B --> B1[Uses NumPy only]
     B --> B2[Uses ON/OFF Step Switch]
-    B --> B3[Learns using error rules]
+    B --> B3[Learns AND gate rules]
 
     C --> C1[Uses fixed weights & bias]
     C --> C2[Uses smooth Sigmoid activation]
     C --> C3[Shows math step-by-step]
 
     D --> D1[Uses TensorFlow & Keras sequential API]
-    D --> D2[Has a hidden layer with ReLU activation]
-    D --> D3[Learns using Binary Cross-Entropy & Adam]
+    D --> D2[Hidden layer with ReLU activation]
+    D --> D3[Binary Cross-Entropy & Adam]
+
+    E --> E1[Multi-class dataset - Iris]
+    E --> E2[Feature scaling & One-Hot Encoding]
+    E --> E3[Softmax activation & Categorical Cross-Entropy]
 ```
 
 ---
@@ -240,7 +249,7 @@ Trainable parameters are the individual weights and biases that the network lear
 
   - `Sequential`: Builds the network layer-by-layer.
   - `Input(shape=(2,))`: Tells the model to expect 2 inputs per sample.
-  - `Dense(4, activation='relu')`: Creates a hidden layer of 4 fully connected neurons using the **ReLU** activation function. ReLU passes positive values through and turns negative values to 0. This speeds up training.
+  - `Dense(4, activation='relu')`: Creates a hidden layer of 4 fully connected neurons using the **ReLU** activation function.
   - `Dense(1, activation='sigmoid')`: Creates an output layer with 1 neuron using the **Sigmoid** activation function to output a probability between 0 and 1.
 
 - **Compiling the Model**:
@@ -253,25 +262,123 @@ Trainable parameters are the individual weights and biases that the network lear
   )
   ```
 
-  Tells Keras to train using the Adam optimizer, grade using Binary Cross-Entropy loss, and track accuracy.
-
 - **Training the Model**:
   ```python
   model.fit(X, y, epochs=500, verbose=0)
   ```
-  Trains the model over 500 passes (`epochs`). `verbose=0` keeps the console clean by hiding logs.
 
 ---
 
-## 🎓 The Viva Q&A Guide (20+ Conceptual Questions)
+## 🌸 Lab 4: Keras MLP for Multiclass Classification
 
-### Q1: What is the main objective of these three labs?
+### Lab 4: Conceptual Foundations
+
+In contrast to binary classification (where the target is 0 or 1), **Multiclass Classification** involves classifying inputs into one of three or more distinct categories.
+
+In Lab 4, we use the classic **Iris Dataset** (150 flower samples, 4 physical features) to classify flowers into **3 species**:
+1. `0`: Iris-Setosa
+2. `1`: Iris-Versicolor
+3. `2`: Iris-Virginica
+
+Key pipeline steps for Multiclass Classification:
+- **Feature Scaling (`StandardScaler`)**: Normalizes input features to zero mean and unit variance ($z = \frac{x - \mu}{\sigma}$), preventing features with larger scales from dominating weight updates.
+- **One-Hot Encoding (`to_categorical`)**: Converts integer targets `[0, 1, 2]` into 3D binary vectors:
+  - Class `0` $\rightarrow$ `[1, 0, 0]`
+  - Class `1` $\rightarrow$ `[0, 1, 0]`
+  - Class `2` $\rightarrow$ `[0, 0, 1]`
+- **Softmax Activation**: Applied at the output layer to convert raw output scores (logits) into a normalized probability distribution that sums up to 1.0.
+
+### Lab 4: Layers & Trainable Parameters
+
+Our network architecture for multiclass classification is:
+
+```
+    [Sepal Length] ----\
+    [Sepal Width]  -----\=====> [Hidden Layer: 8 Neurons (ReLU)] =====> [Output Layer: 3 Neurons (Softmax)]
+    [Petal Length] -----/                                                      |
+    [Petal Width]  ----/                                                [Probability Vector: Setosa, Versicolor, Virginica]
+```
+
+#### Trainable Parameters Calculation:
+
+* **Input Layer to Hidden Layer**:
+  - Inputs = 4 features
+  - Hidden Neurons = 8
+  - Weights = $4 \times 8 = 32$
+  - Biases = 8
+  - Subtotal = $32 + 8 = 40$ parameters.
+* **Hidden Layer to Output Layer**:
+  - Hidden Neurons = 8
+  - Output Neurons = 3 (1 for each class)
+  - Weights = $8 \times 3 = 24$
+  - Biases = 3
+  - Subtotal = $24 + 3 = 27$ parameters.
+* **Total Parameters**: $40 + 27 = 67$ trainable parameters.
+
+### Lab 4: Loss & Activation Functions Made Simple
+
+1. **Softmax Activation Function**:
+   The Softmax function squashes a vector of $K$ real values into a probability distribution of $K$ probabilities proportional to the exponentials of the input numbers:
+   $$\text{Softmax}(z_i) = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}$$
+   This ensures that all outputs are between $0$ and $1$, and their total sum is exactly $1.0$.
+
+2. **Categorical Cross-Entropy Loss**:
+   Measures the performance of a classification model whose output is a probability value between 0 and 1. The loss increases as the predicted probability diverges from the actual label:
+   $$\text{Loss} = -\sum_{i=1}^{K} y_i \log(\hat{y}_i)$$
+   Where $y_i$ is the true binary indicator (0 or 1) from one-hot encoding, and $\hat{y}_i$ is the predicted probability from Softmax.
+
+3. **Decoding Predictions with `Argmax`**:
+   To convert the continuous 3-element probability vector back into a single class prediction, we take the index of the maximum probability using `np.argmax(predictions, axis=1)`.
+
+### Lab 4: Code Breakdown
+
+- **Data Loading & Preprocessing**:
+  ```python
+  iris = load_iris()
+  X, y = iris.data, iris.target
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+  scaler = StandardScaler()
+  X_train = scaler.fit_transform(X_train)
+  X_test = scaler.transform(X_test)
+
+  y_train_encoded = to_categorical(y_train, num_classes=3)
+  y_test_encoded = to_categorical(y_test, num_classes=3)
+  ```
+
+- **Building the Keras Model**:
+  ```python
+  model = Sequential([
+      Input(shape=(4,)),
+      Dense(8, activation='relu'),
+      Dense(3, activation='softmax')
+  ])
+  ```
+
+- **Compilation & Training**:
+  ```python
+  model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+  model.fit(X_train, y_train_encoded, epochs=100, batch_size=16, validation_split=0.1, verbose=0)
+  ```
+
+- **Evaluation & Class Decoding**:
+  ```python
+  predictions = model.predict(X_test, verbose=0)
+  predicted_classes = np.argmax(predictions, axis=1)
+  ```
+
+---
+
+## 🎓 The Viva Q&A Guide (25+ Conceptual Questions)
+
+### Q1: What is the main objective of these four labs?
 
 **Answer:** They show the evolution of neural networks.
 
 1. **Lab 1** builds a single basic Perceptron from scratch to show the simplest binary classifier.
 2. **Lab 2** shows how a single neuron performs a forward pass with a smooth activation function (Sigmoid).
-3. **Lab 3** builds a multi-layer network with a hidden layer and backpropagation using Keras to show modern deep learning.
+3. **Lab 3** builds a multi-layer binary network with a hidden layer and backpropagation using Keras.
+4. **Lab 4** extends multi-layer networks to **Multiclass Classification** using Softmax activation, feature scaling, and one-hot encoding.
 
 ### Q2: What is a Perceptron, and who introduced it?
 
@@ -304,13 +411,14 @@ However, in **deep multi-layer networks**, if we initialize all weights to zero,
 - **Too high**: The network updates weights too aggressively, making it overshoot the best settings and fail to learn.
 - **Too low**: The network updates in tiny baby steps, making it take too long to train or get stuck.
 
-### Q8: Compare Step, Sigmoid, and ReLU activation functions.
+### Q8: Compare Step, Sigmoid, ReLU, and Softmax activation functions.
 
 **Answer:**
 
 - **Step**: A sharp ON/OFF switch. Hard to use in modern training because its derivative is zero everywhere (which blocks backpropagation).
-- **Sigmoid**: A smooth curve between `0` and `1`. Great for output layers because the decimal represents a probability.
-- **ReLU (Rectified Linear Unit)**: If the input is negative, it output `0`. If positive, it passes the value through. It is highly efficient and makes training deep networks much faster.
+- **Sigmoid**: A smooth curve between `0` and `1`. Great for binary output layers.
+- **ReLU (Rectified Linear Unit)**: If the input is negative, it outputs `0`. If positive, it passes the value through. Highly efficient for hidden layers.
+- **Softmax**: Converts a vector of scores into a multi-class probability distribution that sums up to 1.0. Used in multiclass output layers.
 
 ### Q9: Why is the Step function not used in modern backpropagation?
 
@@ -377,3 +485,33 @@ However, in **deep multi-layer networks**, if we initialize all weights to zero,
 **Answer:** Backpropagation uses the calculus chain rule to calculate how much each weight in a multi-layer network contributed to the final error, propagating that error backward layer-by-layer.
 
 - **Lab 1** does not use backpropagation because it has only a single layer. It uses the direct Perceptron learning rule, which updates weights based only on the immediate error of the output.
+
+### Q22: What is the difference between Binary Classification and Multiclass Classification?
+
+**Answer:**
+- **Binary Classification**: Predicts one of two mutually exclusive classes (e.g., Yes/No, 0/1). The output layer typically uses 1 neuron with a **Sigmoid** activation function and **Binary Cross-Entropy** loss.
+- **Multiclass Classification**: Predicts one of three or more mutually exclusive classes (e.g., Setosa / Versicolor / Virginica). The output layer uses $N$ neurons (where $N$ is the number of classes) with a **Softmax** activation function and **Categorical Cross-Entropy** loss.
+
+### Q23: Why do we use Softmax activation instead of Sigmoid for the output layer in multiclass classification?
+
+**Answer:** Sigmoid evaluates each output neuron independently (outputs sum to an arbitrary total). Softmax calculates probabilities relative to all classes simultaneously by exponentiating and normalizing all raw output logits. This forces the sum of probabilities across all classes to equal exactly $1.0$ ($100\%$).
+
+### Q24: What is One-Hot Encoding, and why is it necessary for Categorical Cross-Entropy?
+
+**Answer:** One-Hot Encoding converts integer class labels ($0, 1, 2$) into binary vectors where only the true class index is $1$ and all others are $0$ (e.g., class $2 \rightarrow [0, 0, 1]$).
+It is necessary for `categorical_crossentropy` because loss is calculated by taking the dot product of the true probability vector $y$ and the log of predicted probabilities $\log(\hat{y})$. Integer labels would improperly imply a mathematical ordering or distance between classes (e.g. class 2 is twice class 1).
+
+### Q25: Compare `categorical_crossentropy` and `sparse_categorical_crossentropy`. When should you use each?
+
+**Answer:**
+- **`categorical_crossentropy`**: Used when target labels are **One-Hot Encoded** vectors (e.g. `[[1,0,0], [0,1,0]]`).
+- **`sparse_categorical_crossentropy`**: Used when target labels are **Integers** (e.g. `[0, 1, 2]`).
+Both produce the exact same loss calculation and gradients; `sparse_categorical_crossentropy` simply avoids manually one-hot encoding data and saves memory.
+
+### Q26: What is the purpose of `np.argmax()` when decoding model predictions?
+
+**Answer:** The Softmax output layer returns a vector of probabilities (e.g., `[0.02, 0.91, 0.07]`). `np.argmax(predictions, axis=1)` finds the array index containing the maximum value (index `1` in this example), which corresponds to the predicted class integer label.
+
+### Q27: Why is Feature Scaling (`StandardScaler`) crucial before training an MLP?
+
+**Answer:** Neural network weight updates are directly proportional to feature magnitudes. Unscaled features with large ranges (e.g. 1000 vs 0.1) cause gradients to oscillate or blow up, leading to slow training or poor convergence. `StandardScaler` centers features to zero mean and scales them to unit variance ($z = \frac{x - \mu}{\sigma}$), ensuring smooth and balanced gradient steps across all dimensions.

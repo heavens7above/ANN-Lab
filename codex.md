@@ -235,3 +235,111 @@ for i in range(len(X)):
    - Feeds the input data `X` back into the trained model to perform inference. This returns raw float probability values.
 7. **Inference Loop & Thresholding**
    - Loops over predictions and converts the float probability to a binary class: `int(predictions[i][0] >= 0.5)`. Prints the result for each input sample.
+
+---
+
+## 🌸 Lab 4: Multiclass Classification using Keras Multi-Layer Perceptron (MLP)
+**File**: [ANN_lab4.ipynb](./ANN_lab4.ipynb)
+
+This script builds, compiles, and evaluates a Multi-Layer Perceptron (MLP) for **Multiclass Classification** on the 3-class **Iris dataset** using **TensorFlow/Keras** and **scikit-learn**.
+
+### Full Code Code Block
+```python
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Input, Dense
+from tensorflow.keras.utils import to_categorical
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+# 1. Load the Iris Dataset (4 features, 3 target classes)
+iris = load_iris()
+X = iris.data
+y = iris.target
+target_names = iris.target_names
+
+# 2. Split dataset into training (80%) and testing (20%) sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# 3. Standardize feature values (zero mean, unit variance)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# 4. One-hot encode multiclass target labels
+y_train_encoded = to_categorical(y_train, num_classes=3)
+y_test_encoded = to_categorical(y_test, num_classes=3)
+
+# 5. Build Keras MLP Model for Multiclass Classification
+model = Sequential([
+    Input(shape=(4,)),
+    Dense(8, activation='relu'),
+    Dense(3, activation='softmax')
+])
+
+# 6. Compile the model
+model.compile(
+    optimizer='adam',
+    loss='categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+# 7. Train the model
+print("Training Keras MLP Model on Iris Dataset...")
+model.fit(X_train, y_train_encoded, epochs=100, batch_size=16, validation_split=0.1, verbose=0)
+
+# 8. Evaluate model performance on test set
+loss, accuracy = model.evaluate(X_test, y_test_encoded, verbose=0)
+print(f"\nTest Loss: {loss:.4f}")
+print(f"Test Accuracy: {accuracy * 100:.2f}%\n")
+
+# 9. Predict and decode multiclass predictions using Argmax
+predictions = model.predict(X_test, verbose=0)
+predicted_classes = np.argmax(predictions, axis=1)
+
+print("Sample Predictions on Test Set:")
+print("-" * 65)
+print(f"{'Sample #':<10} | {'True Class':<15} | {'Predicted Class':<15} | {'Probabilities (Setosa, Versicolor, Virginica)'}")
+print("-" * 65)
+
+for i in range(10):
+    sample_probs = [f"{p:.3f}" for p in predictions[i]]
+    print(f"{i+1:<10} | {target_names[y_test[i]]:<15} | {target_names[predicted_classes[i]]:<15} | {sample_probs}")
+```
+
+### Detailed Code Walkthrough
+
+1. **Imports (`load_iris`, `train_test_split`, `StandardScaler`, `to_categorical`)**
+   - `load_iris`: Loads the classic Iris flower dataset containing 150 samples, 4 physical features (sepal length/width, petal length/width), and 3 species target classes (Setosa, Versicolor, Virginica).
+   - `train_test_split`: Splits data into training (80%) and test (20%) sets while preserving class distribution ratios (`stratify=y`).
+   - `StandardScaler`: Scales input features so they have a mean of 0 and a standard deviation of 1. Standardizing features is essential for smooth gradient descent.
+   - `to_categorical`: Converts integer labels (`0, 1, 2`) into one-hot encoded binary vectors (`[1,0,0]`, `[0,1,0]`, `[0,0,1]`).
+2. **Loading & Dataset Splitting**
+   - `X` contains the 150x4 feature matrix, and `y` contains target values `[0, 1, 2]`.
+   - `train_test_split` creates `X_train` (120 samples) and `X_test` (30 samples).
+3. **Feature Scaling (`StandardScaler`)**
+   - `scaler.fit_transform(X_train)` learns the mean and variance of `X_train` and normalizes it.
+   - `scaler.transform(X_test)` applies the exact same mean and variance transformation to `X_test` without data leakage.
+4. **One-Hot Encoding (`to_categorical`)**
+   - Transforms 1D class array `[0, 1, 2]` into 2D one-hot target matrix of shape `(N, 3)` required by `categorical_crossentropy`.
+5. **Model Architecture (`Sequential`)**
+   - `Input(shape=(4,))`: 4 input slots for the scaled features.
+   - `Dense(8, activation='relu')`: Hidden layer of 8 neurons with ReLU activation for non-linear pattern extraction.
+   - `Dense(3, activation='softmax')`: Output layer with 3 neurons matching the 3 classes. Uses **Softmax** activation to output a probability distribution over the 3 classes that sums to 1.0.
+6. **Compilation (`categorical_crossentropy` & `adam`)**
+   - Loss function: `categorical_crossentropy`, which evaluates multiclass probability distributions against one-hot targets.
+   - Optimizer: `adam` for adaptive weight updates.
+   - Metric: `accuracy`.
+7. **Model Training (`model.fit`)**
+   - Fits the model over 100 `epochs` with a batch size of 16 and a 10% validation split.
+8. **Evaluation (`model.evaluate`)**
+   - Evaluates test loss and test accuracy on the 30 unseen test samples.
+9. **Predictions & Decoding (`np.argmax`)**
+   - `model.predict(X_test)` returns a 3-element probability vector for each sample.
+   - `np.argmax(predictions, axis=1)` extracts the index of the highest probability value to give the predicted class integer `(0, 1, or 2)`.
+   - Maps predicted integers back to species names (`Setosa`, `Versicolor`, `Virginica`) and prints formatted predictions.
+

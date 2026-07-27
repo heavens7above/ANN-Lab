@@ -102,13 +102,42 @@ Instead of one single robot cell, we have three rows of robots:
 
 ---
 
+## 🌸 File 4: [ANN_lab4.ipynb](./ANN_lab4.ipynb) (The Multi-Choice Quiz Robot)
+
+This file teaches our robot team how to solve a **Multiclass Problem**! Instead of just picking between YES (1) and NO (0), the robot must choose which type of flower it is looking at from **3 choices**:
+1. **Setosa** (Class 0)
+2. **Versicolor** (Class 1)
+3. **Virginica** (Class 2)
+
+### The Story of the Softmax Panel:
+Instead of a single dimmer switch at the end, the boss robot now has a **3-Button Light Board (Softmax)**.
+- Each button represents one flower type.
+- Softmax makes sure all 3 button lights together sum up to **100%**.
+- Whichever button shines brightest (e.g. 92% Setosa, 5% Versicolor, 3% Virginica) is our winner! We use **Argmax** to pick the brightest button.
+
+### Line-by-Line Simple Breakdown:
+* `from sklearn.datasets import load_iris`
+  > **ELI5:** We load a famous flower dataset containing 150 real flowers with measurements of their petals and sepals.
+* `to_categorical(y_train, num_classes=3)`
+  > **ELI5:** **One-Hot Encoding!** Instead of giving the robot class numbers like `2`, we turn it into a 3-slot scorecard: `[0, 0, 1]`.
+* `StandardScaler()`
+  > **ELI5:** Some flower parts are measured in big numbers and some in tiny numbers. The scaler resizes all numbers to a fair playground so no single feature bullies the rest.
+* `Dense(3, activation='softmax')`
+  > **ELI5:** The final layer has 3 neurons using **Softmax**. Softmax splits 100% confidence across the 3 flower options.
+* `loss='categorical_crossentropy'`
+  > **ELI5:** This is the grading system for multiple choices. It gives a big penalty if the robot picks the wrong flower with high confidence.
+* `np.argmax(predictions, axis=1)`
+  > **ELI5:** Argmax points its finger at the highest percentage in the list to declare the winning flower name!
+
+---
+
 ## 📖 The User Manual: [README.md](./README.md)
 
 ### What is the README?
 The `README.md` is the **Main Map** of the project. It is written for older students and teachers. It contains:
-1. **Mathematical Equations:** The math symbols (like sum, sigma, e^-z) that represent the logic we explained above.
+1. **Mathematical Equations:** The math symbols (like sum, sigma, e^-z, softmax) that represent the logic we explained above.
 2. **Step-by-Step Tables:** Showing how the calculations work.
-3. **The Q&A Section:** A list of 21 questions and answers explaining common terms like "Vanishing Gradient," "learning rate," "activation functions," and "overfitting."
+3. **The Q&A Section:** A list of 25+ conceptual questions and answers explaining common terms like "Softmax vs Sigmoid," "One-Hot Encoding," "Categorical Cross-Entropy," "Vanishing Gradient," "learning rate," and "overfitting."
 
 ---
 
@@ -117,6 +146,9 @@ The `README.md` is the **Main Map** of the project. It is written for older stud
 * **Neuron (Cell):** A single box that takes numbers, multiplies them, adds them, and spits out a new number.
 * **Weights:** How loud an input is. Bigger weight = more important input.
 * **Bias:** Natural grumpiness or eagerness. A positive bias means the neuron is eager to say YES. A negative bias means it wants to say NO.
-* **Epoch:** One full run through the study guide (dataset). 500 epochs means reading the study guide 500 times.
-* **Overfitting:** When a robot memorizes the exact training questions instead of learning the actual rules. (Like memorizing that 2 + 2 = 4 but not knowing how to add 3 + 2).
+* **Epoch:** One full run through the study guide (dataset).
+* **One-Hot Encoding:** Turning a single answer choice (e.g., choice #2) into a vector of zeros and a single one (`[0, 0, 1]`).
+* **Softmax:** An activation function for multiclass problems that turns scores into probabilities that add up to 1 (100%).
+* **Argmax:** A helper function that finds the location of the biggest number in a list.
+* **Overfitting:** When a robot memorizes the exact training questions instead of learning the actual rules.
 * **Backpropagation:** The process of the boss robot telling the middle robots "Hey, we got it wrong, let's trace back who had their volume set incorrectly and fix it."

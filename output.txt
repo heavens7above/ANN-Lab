@@ -1,0 +1,19 @@
+Training Keras MLP Model on Iris Dataset...
+
+Test Loss: 0.3008
+Test Accuracy: 90.00%
+
+Sample Predictions on Test Set:
+-----------------------------------------------------------------
+Sample #   | True Class      | Predicted Class | Probabilities (Setosa, Versicolor, Virginica)
+-----------------------------------------------------------------
+1          | setosa          | setosa          | ['0.972', '0.008', '0.020']
+2          | virginica       | virginica       | ['0.031', '0.273', '0.697']
+3          | versicolor      | versicolor      | ['0.066', '0.833', '0.101']
+4          | versicolor      | versicolor      | ['0.047', '0.874', '0.079']
+5          | setosa          | setosa          | ['0.980', '0.003', '0.017']
+6          | versicolor      | virginica       | ['0.067', '0.272', '0.661']
+7          | setosa          | setosa          | ['0.990', '0.001', '0.009']
+8          | setosa          | setosa          | ['0.962', '0.007', '0.031']
+9          | virginica       | virginica       | ['0.012', '0.141', '0.847']
+10         | versicolor      | versicolor      | ['0.096', '0.494', '0.410']

@@ -131,13 +131,63 @@ Instead of a single dimmer switch at the end, the boss robot now has a **3-Butto
 
 ---
 
+## 🐱🐶 File 5: [ANN_lab5.ipynb](./ANN_lab5.ipynb) (The Picture Recognizer Robot - CNN Cats vs. Dogs)
+
+This file teaches our robot how to look at actual **photos of cats and dogs** and tell them apart!
+
+### The Story of the Photo Inspector (CNN):
+Photos are full of thousands of tiny pixel dots. If a robot just looked at all dots at once, it would get overwhelmed. So we build a **Convolutional Neural Network (CNN)**.
+
+1. **Magnifying Glass (Conv2D):** The robot slides a tiny 3x3 magnifying glass across the image looking for simple shapes — edges, pointy cat ears, fluffy dog fur, or wet noses.
+2. **Squishing the Picture (MaxPooling2D):** After finding shapes, the robot shrinks the picture to keep only the most important clues, making the image smaller and faster to process.
+3. **Photo Magic Tricks (Data Augmentation):** To prevent the robot from cheating or memorizing specific photos, we randomly flip, rotate, and zoom the training photos. A cat flipped upside down is still a cat!
+4. **Blindfold Training (Dropout):** During practice, we randomly hide half of the robot's middle brain cells (`Dropout(0.5)`). This forces all cells to become smart instead of relying on one single "star student."
+5. **The Final Dimmer Switch:** A single output neuron with **Sigmoid** gives the final verdict: `0` for Cat, `1` for Dog.
+
+---
+
+## 🏠 File 6: [ANN_lab6.ipynb](./ANN_lab6.ipynb) (The House Price Estimator Robot - Keras MLP Regression)
+
+This file teaches our robot how to guess an **exact number** (house value in California) rather than picking a label! This is called **Regression**.
+
+### The Story of the Price Evaluator:
+Instead of guessing YES/NO, the robot looks at 8 neighborhood clues (like median income, house age, and number of rooms) and outputs a price in dollars.
+
+1. **No Upper Limit (Linear Output):** The final neuron has **no activation switch (Linear)**. It can output any dollar amount from \$50,000 to \$500,000!
+2. **Gear Shift Test (Activation Functions):** We test 3 different brain rules:
+   - **ReLU:** Fast and energetic. If a score is negative, it outputs 0; otherwise, it passes the score straight through.
+   - **Sigmoid:** Slow and gentle curve between 0 and 1.
+   - **Tanh:** Balanced curve between -1 and +1.
+3. **Grading Penalty Test (Loss Functions):**
+   - **MSE (Mean Squared Error):** Super strict! If the robot is off by \$10,000, it squashes the error and penalizes it by 100,000,000. Outliers upset it a lot!
+   - **MAE (Mean Absolute Error):** Fair and relaxed. It penalizes errors in direct proportion to how far off they are.
+   - **Huber Loss (The Best of Both Worlds):** Uses MSE for small mistakes and MAE for huge outliers!
+
+---
+
+## 🍷 File 7: [ANN_lab7.ipynb](./ANN_lab7.ipynb) (The Wine Inspector Robot - Keras MLP Multiclass)
+
+This file teaches our robot how to inspect 13 chemical features of wine samples and classify them into **3 Wine Cultivars**!
+
+### The Story of the Wine Sommelier:
+The robot needs to choose between 3 wine types (Cultivar 0, 1, or 2).
+
+1. **Stratified Split (Fair Exam):** When we split the dataset into practice and test sets, we make sure both sets have equal proportions of all 3 wine types.
+2. **Coach Battle (Optimizer Comparison):** We hire 3 different coaches to train the robot:
+   - **Adam:** The smart, adaptive coach who adjusts speeds for each brain cell.
+   - **SGD (Stochastic Gradient Descent):** The traditional coach who walks at a steady, fixed pace.
+   - **RMSprop:** The momentum coach who speeds up on smooth hills and slows down on bumpy curves.
+3. **Scorecard (Confusion Matrix):** A 3x3 grid showing exactly which wine types the robot got right and which ones it mixed up!
+
+---
+
 ## 📖 The User Manual: [README.md](./README.md)
 
 ### What is the README?
 The `README.md` is the **Main Map** of the project. It is written for older students and teachers. It contains:
-1. **Mathematical Equations:** The math symbols (like sum, sigma, e^-z, softmax) that represent the logic we explained above.
-2. **Step-by-Step Tables:** Showing how the calculations work.
-3. **The Q&A Section:** A list of 25+ conceptual questions and answers explaining common terms like "Softmax vs Sigmoid," "One-Hot Encoding," "Categorical Cross-Entropy," "Vanishing Gradient," "learning rate," and "overfitting."
+1. **Mathematical Equations:** The math symbols (like sum, sigma, $e^{-z}$, softmax, cross-entropy, MSE, Huber) that represent the logic we explained above.
+2. **Step-by-Step Tables:** Showing how calculations work.
+3. **The Viva Q&A Section:** A list of 40+ conceptual questions and answers explaining terms like "Softmax vs Sigmoid," "One-Hot Encoding," "Categorical Cross-Entropy," "CNN vs MLP," "Conv2D," "MaxPooling," "Data Augmentation," "Dropout," "MSE vs MAE vs Huber," and "Adam vs SGD vs RMSprop."
 
 ---
 
@@ -152,3 +202,14 @@ The `README.md` is the **Main Map** of the project. It is written for older stud
 * **Argmax:** A helper function that finds the location of the biggest number in a list.
 * **Overfitting:** When a robot memorizes the exact training questions instead of learning the actual rules.
 * **Backpropagation:** The process of the boss robot telling the middle robots "Hey, we got it wrong, let's trace back who had their volume set incorrectly and fix it."
+* **CNN (Convolutional Neural Network):** A specialized neural network designed to scan photos using small sliding magnifying glasses (filters).
+* **Conv2D:** A 2D sliding filter layer that detects visual features like edges, textures, and shapes.
+* **MaxPooling2D:** Downsampling layer that keeps the strongest visual clue in each small region, shrinking photo resolution.
+* **Data Augmentation:** Artificially expanding a picture dataset by randomly flipping, rotating, and zooming training images.
+* **Dropout:** A regularization technique that randomly turns off a fraction of neurons during training to prevent memorization.
+* **Regression:** Machine learning task where the target is a continuous numeric value (e.g., house prices, temperatures).
+* **MSE (Mean Squared Error):** Regression loss function that squares differences between predicted and true values.
+* **MAE (Mean Absolute Error):** Regression loss function that measures average absolute difference between predicted and true values.
+* **Huber Loss:** Robust regression loss function that behaves quadratically (MSE) for small errors and linearly (MAE) for large errors.
+* **Adam / SGD / RMSprop:** Optimization algorithms (coaches) that calculate how to update network weights based on error gradients.
+* **Stratified Split:** Splitting a classification dataset into training/testing subsets while maintaining exact class ratios.
